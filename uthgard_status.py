@@ -20,20 +20,20 @@ def getPlayerCount():
 def emailMe(message):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login("sender address", "sender pw")
+    server.login("", "")
     
     msg = message
-    server.sendmail("sender address", "receiving address", msg)
+    server.sendmail("", "", msg)
     server.quit()
 
 def populationCheck():
     player_count = getPlayerCount()
 
     if player_count <= 4000:
-        emailMe("Play time!")
-        print("Play time!")
+        emailMe(str(player_count) + "\nPlay time!")
+        print(str(player_count) + "\nPlay time!")
     else:
-        print("Can't play.")
+        print(str(player_count) + "\nCan't play.")
     
 
 populationCheck()
