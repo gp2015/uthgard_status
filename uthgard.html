@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">  
+        <meta name="author" content="Uthgard Staff">
+        <meta name="description" content="Uthgard is a classic Dark Age of Camelot freeshard reviving the good old times. We promise you an authentic, free and unbiased experience, and a rock-solid, long-running server.">
+        <meta name="keywords" content="Uthgard,DAoC,Dark Age of Camelot,Freeshard,Classic">
+        <title>Uthgard &ndash; Classic Dark Age of Camelot Community Server</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script src="/js/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+        <script src="/js/jquery.steps.min.js"></script>
+        
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-77451004-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+        <link href="/img/uthgard.ico" rel="shortcut icon" type="image/x-icon">
+        <link rel="stylesheet" href="/js/jquery-ui-1.11.4.custom/jquery-ui.min.css">
+        <link rel="stylesheet" href="/js/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
+        <link rel="stylesheet" href="/css/asterix.css">
+        
+        
+<script src="/js/tempo.min.js"></script>
+<style>
+#idefix-content {
+    max-width: 1239px !important;
+}
+.mainpage-logo {
+    height: 160px;
+    background: url('/img/header.jpg') no-repeat center bottom transparent;
+}
+</style>
+
+    </head>
+    <body >
+        
+        
+            
+<svg id="showmetheplaybutton" width="400" height="300" style="display: none; position: fixed; right: 0; z-index: 9999; top: 50px">
+  <defs>
+    <marker id="arrow" markerWidth="13" markerHeight="13" refx="2" refy="6" orient="auto">
+      <path d="M2,2 L2,11 L10,6 L2,2" style="fill:red;" />
+    </marker>
+  </defs>
+  <path d="M10,250 L125,40"
+        style="stroke:red; stroke-width: 4px; fill: none;
+                 marker-end: url(#arrow);"
+  />
+</svg>
+<div class="asterix-userbar">
+  <div id="userbar">
+    
+<span class="asterix-userbar-logo">
+    <a href="/" title="home">
+        <img src="/img/asterix/knot2.png" alt="Uthgard">
+        
+<span class="logo"><span>U</span><span>thgard</span></span>
+
+    </a>
+</span>
+
+    <span data-logged-out="true" class="asterix-userbar-welcomeback">Please sign-in to access your game account.</span>
+    <span data-logged-in="true" class="asterix-userbar-welcomeback" style="display: none">
+        Welcome back, <span id="userbar-email">___</span>!
+    </span>
+    <span data-logged-in="true" class="asterix-userbar-profile" style="display: none">
+        <span id="userbar-icon" class="icon">&nbsp;</span>
+        <span id="userbar-name">___</span>
+    </span>
+    <a id="manageAccountLink" href="/account/"><span class="asterix-userbar-action">Manage Account</span></a>
+    <span data-logged-in="true" class="asterix-userbar-action connect" id="loginmagic" style="display: none;">
+      <span>
+        <span>
+          <button id="connect">Play!</button>
+          <button id="connect_menu">Additional Launcher Options</button>
+        </span>
+        <span id="connect_menu_content">
+          <button id="launcher_settings">Launcher Settings</button>
+          <button id="launcher_account">Account Chooser</button>
+          <button id="launcher_howto">How To</button>
+        </ul>
+      </span>
+      <script>
+      var urlHandler = function(action, args) {
+        window.location = "uthgard://" + action + "/" + args;
+      }
+      var login = function(action) {
+        $.post(
+          { url: '/account/api/login', headers: { 'X-Uthgard': 'isAwesome' }},
+          function(data) { urlHandler(action, data); })
+        .fail(function(){ alert('Could not fetch login token. Are you logged in? Click on "Manage Account".'); });
+        $('#showmetheplaybutton').hide();
+      }
+      $(function() {
+        
+        $("#launcher_settings")
+          .button({
+            icons: {
+              primary: "ui-icon-gear"
+            }
+          })
+          .click(function() {
+            urlHandler("settings", "");
+          });
+        
+        $("#launcher_howto")
+          .button({
+            icons: {
+              primary: "ui-icon-help"
+            }
+          })
+          .click(function() {
+            window.location = "/howto#4";
+          });
+        
+        var connectTo = "login";
+        if (location.search.indexOf("?testserver=") != -1) {
+         connectTo = "testserver";
+         $('#connect').text('Testserver');
+         $('#connect').addClass('flashanim');
+         $('#showmetheplaybutton').show();
+        }
+
+        $("#connect")
+          .button()
+          .click(function() {
+            $(this).fadeOut().delay(5000).fadeIn();
+            login(connectTo);
+          });
+        if (location.search.indexOf("?play=") != -1) {
+         $('#connect').addClass('flashanim');
+         $('#showmetheplaybutton').show();
+        }
+
+        $("#launcher_account")
+          .button({
+            icons: {
+              primary: "ui-icon-folder-open"
+            }
+          })
+          .click(function() {
+            login("loginchooser");
+          });
+
+        
+        var menu = $("#connect_menu_content").hide();
+        $("#connect_menu")
+          .button({
+            text: false,
+            icons: {
+              primary: "ui-icon-plus"
+            }
+          })
+          .click(function() {
+            menu.show();
+            $(document).one("click", function() { menu.hide(); });
+            return false;
+          });
+
+        $("#loginmagic").hide();
+      });
+      </script>
+    </span>
+  </div>   
+  
+  <script>
+      
+      $(function() {
+        $('*[data-login-required=true]').hide();
+        var setUserBar = function(userbar) {
+          $('#userbar-name').text(userbar.Name);
+          $('#userbar-email').text(userbar.Email);
+          $('#userbar-icon').css('background-image', "url('/img/classes/" + userbar.Icon + ".png')");
+
+          
+          $('*[data-logged-out=true]').hide();
+          $('*[data-logged-in=true]').delay(1000).show();
+
+          
+          $(function() { $('*[data-login-required=true]').show(); });
+          if (userbar.IsGM) {
+              $(function() { $('*[data-gm=true]').show(); });
+          } else {
+              $(function() { $('*[data-gm=true]').hide(); });
+          }
+        };
+        var entry = JSON.parse(localStorage.getItem("userbar2"));
+        if (entry != null) setUserBar(entry.data);
+        if (entry == null || (Date.now() - entry.age) > 60*60*1000) {
+          $.get("/account/api/userbar", function(data) {
+              setUserBar(data);
+              localStorage.setItem("userbar2", JSON.stringify({
+                  'age': Date.now(),
+                  'data': data,
+              }));
+          });
+        }
+    });
+  </script>
+  
+</div>
+
+            
+<div class="asterix-mainmenu">
+    <div id="mainmenu">
+<a href="/home">
+    <span class="asterix-mainmenu-item">
+        <span>News</span>
+    </span>
+</a>
+
+<a href="/howto">
+    <span class="asterix-mainmenu-item">
+        <span>Getting Started</span>
+    </span>
+</a>
+
+<a href="/rules">
+    <span class="asterix-mainmenu-item">
+        <span>Rules</span>
+    </span>
+</a>
+
+<a href="/herald/">
+    <span class="asterix-mainmenu-item">
+        <span>Herald</span>
+    </span>
+</a>
+
+<a href="/tracker/">
+    <span class="asterix-mainmenu-item">
+        <span>Issue Tracker</span>
+    </span>
+</a>
+
+<a href="/irc">
+    <span class="asterix-mainmenu-item">
+        <span>IRC</span>
+    </span>
+</a>
+
+<a href="https://www.uthgard.net/forum" target="_blank">
+    <span class="asterix-mainmenu-item">
+        <span>Forum</span>
+    </span>
+</a>
+
+    </div>
+    <script>
+        $(document).ready(function() {
+            $("[href]").each(function() {
+                if (this.href == window.location.href.split("?")[0]) {
+                    $(this).addClass("active");
+                }
+            });
+        });
+    </script>
+</div>
+
+        
+
+    <div class="asterix-content-spacer"></div>
+
+
+<div class="idefix">
+    <div class="idefix-left left">&nbsp;</div>
+    <div class="idefix-right right">&nbsp;</div>
+    <div class="idefix-content content">
+        
+
+    
+    <div id="serverstatus" class="server-status">
+        <table data-template>
+            <tr>
+                <td><b>Game Server:</b> &nbsp; <span data-isonline="[[IsOnline]]">[[Status]]</span></td>
+                <td><b>Players:</b> &nbsp; [[Players]]</td>
+                <td><b>Created Accounts:</b> &nbsp; [[Accounts]]</td>
+                <td><b>Created Characters:</b> &nbsp; [[Chars]]</td>
+            </tr>
+        </table>
+    </div>
+    <div class="last-resolved-bugs-mainpage">
+        <h1 style="margin-bottom: 0.5em;">Latest Resolved Bugs</h1>
+        <table id="resolvedbugs">
+            <tr data-template>
+                <td><a href="/tracker/issue/[[ID]]/">#[[ID]]</a></td>
+                <td>[[Title]]</td>
+            </tr>
+        </table>
+	  <p>↪ Developer Blog: <span id="blogContainer"><a href="http://blog.uthgard.org/" data-template>[[Title]]</a></span></p>
+    </div>
+    <h1 style="clear: none;">Welcome to the Uthgard community!</h1>
+    <p>Welcome to Uthgard! A Dark Age of Camelot experience like no other - taking you back to the glory days of one of the greatest MMORPG’s ever created!</p>
+
+    <p>A lot has changed since our humble beginnings in 2003 and we’ve come a long way as the first Dark Age of Camelot freeshard. With our diligence and maturity, Uthgard boasts a much more stable, authentic and exploit-free gaming experience than any other freeshard. Our staff are neutral, fair, and have put an incredible amount of time into building this great server. We promise you the most authentic experience that goes above and beyond any other server and a chance to go back in time during Dark Age of Camelot’s classic era.</p>
+
+    <p>The vision of Uthgard has changed over time but with our relaunch we are completely focused on an authentic 1.65 experience. We strive to deliver a wonderful classic setting and welcome you to our robust worldwide community that supports and looks after each other.</p>
+
+    <p>Whether your aim is to dominate enemies in the frontier, become a legendary crafter, or defeat dragons throughout the land, Uthgard has a place for you! So join us, rekindle the memories of old and let the adventures begin!</p>
+
+    <hr style="clear: both;">
+    <div id="news">
+        <div class="news" data-template itemscope itemtype="http://schema.org/Article">
+            <h1 itemprop="name">[[Title]]</h1>
+            <div class="meta">
+                Written by <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">[[Author]]</span></span>
+                on <span itemprop="datePublished" content="[[PublishedAt]]">[[PublishedAt | date 'localedate']]</span>
+            </div>
+            <span itemprop="articleBody">[[Text]]</span>
+            <div class="footer">
+                <a href="[[CommentLink]]" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                    <span itemprop="rati    ngCount">[[NumComments]]</span> comments
+                </a>
+            </div>
+        </div>
+        <div data-template-fallback>No news available at the current time.</div>
+    </div>
+    <script>
+        var cfg =  {'var_braces' : '\\[\\[\\]\\]', 'tag_braces' : '\\[\\?\\?\\]'};
+        var news = Tempo.prepare("news", cfg);
+        var serverstatus = Tempo.prepare("serverstatus", cfg);
+        var blogContainer = Tempo.prepare("blogContainer", cfg);
+        var resolvedbugs = Tempo.prepare("resolvedbugs", cfg);
+        $.getJSON("/api/news", function(data) {
+          news.render(data);
+          $('span[itemprop=articleBody]').each(function(i, v) { $(v).html($(v).text()); });  
+        });
+        $.getJSON("/api/serverstatus", function(data) { serverstatus.render(data); });
+        $.getJSON("/api/blog", function(data) { blogContainer.render(data); });
+        $.getJSON("/tracker/api/latestResolvedBugs", function(data) { resolvedbugs.render(data); });
+    </script>
+    
+    <h1>We are here to help <i>*you*</i></h1>
+    
+    <div class="clear"></div>
+    <div class="staff-members">
+        
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/alycon.jpg');">
+    <div>Alcyon</div>
+    <img src="/img/staff/UK.gif" alt="Country: UK">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/abydos.jpg');">
+    <div>Abydos</div>
+    <img src="/img/staff/US.gif" alt="Country: US">
+</div>
+
+<div class="staff-member" title="Developer" style="background-image: url('/img/staff/baldrug.jpg');">
+    <div>Baldrug</div>
+    <img src="/img/staff/DE.gif" alt="Country: DE">
+</div>
+
+<div class="staff-member" title="Developer" style="background-image: url('/img/staff/blue.jpg');">
+    <div>Blue</div>
+    <img src="/img/staff/DE.gif" alt="Country: DE">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/cirdan.jpg');">
+    <div>Cirdan</div>
+    <img src="/img/staff/US.gif" alt="Country: US">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/decidon.jpg');">
+    <div>Decidon</div>
+    <img src="/img/staff/US.gif" alt="Country: US">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/genjiro.jpg');">
+    <div>Genjiro</div>
+    <img src="/img/staff/DE.gif" alt="Country: DE">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/gnome.jpg');">
+    <div>Gnome</div>
+    <img src="/img/staff/US.gif" alt="Country: US">
+</div>
+
+<div class="staff-member" title="Developer" style="background-image: url('/img/staff/juna.jpg');">
+    <div>Juna</div>
+    <img src="/img/staff/DE.gif" alt="Country: DE">
+</div>
+
+<div class="staff-member" title="Developer" style="background-image: url('/img/staff/thekroko.jpg');">
+    <div>TheKroko</div>
+    <img src="/img/staff/US.gif" alt="Country: US">
+</div>
+
+<div class="staff-member" title="Developer" style="background-image: url('/img/staff/nayru.jpg');">
+    <div>Nayru</div>
+    <img src="/img/staff/DE.gif" alt="Country: DE">
+</div>
+
+<div class="staff-member" title="Gamemaster" style="background-image: url('/img/staff/trishin.jpg');">
+    <div>Trishin</div>
+    <img src="/img/staff/UK.gif" alt="Country: UK">
+</div>
+
+    </div>
+    <div class="clear"></div>
+
+    <p>The Uthgard Staff are always here to make sure that you are having a great time on our server. We are constantly working on improving the server, and can help you with support when things go haywire. Feel free to reach out to us any time.</p>   
+    
+    Want to have a look behind the scenes? Click <a href="http://blog.uthgard.org/">here</a>.
+    
+    <hr>
+    <p>Curious to start your adventure? Click <a href="/howto">here</a> to get started. We are hoping to see you soon on our server!</p>
+    
+    <div class="bottom-spacer"></div>
+
+
+    </div>
+</div>
+
+
+<p class="asterix-copyright">
+    Artwork and screen shots Copyright © 2001-2004 Mythic Entertainment, Inc. All rights reserved. Used with permission of Mythic Entertainment. Mythic Entertainment, the Mythic Entertainment logo, "Dark Age of Camelot," "Shrouded Isles," "Foundations," "New Frontiers," "Trials of Atlantis," "Catacombs", "Darkness Rising," the Dark Age of Camelot and subsequent logos, and the stylized Celtic knot are trademarks of Mythic Entertainment, Inc.
+</p>
+
+        
+    </body>
+</html>
